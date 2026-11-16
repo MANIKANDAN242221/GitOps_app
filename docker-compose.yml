@@ -1,0 +1,21 @@
+# Local run of both images:  docker compose up --build   →  http://localhost:8080
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      APP_ENV: local
+    ports:
+      - "3000:3000"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    environment:
+      BACKEND_URL: http://backend:3000
+    ports:
+      - "8080:8080"
+    depends_on:
+      - backend
