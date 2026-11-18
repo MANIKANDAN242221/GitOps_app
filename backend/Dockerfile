@@ -5,6 +5,8 @@ COPY backend/package.json backend/package-lock.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 
 FROM node:22-alpine
+# Pull in OS security fixes released after the base image was built
+RUN apk upgrade --no-cache
 ARG APP_VERSION=1.0.0
 ENV NODE_ENV=production \
     PORT=3000 \

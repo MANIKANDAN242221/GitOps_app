@@ -9,7 +9,12 @@ ENV VITE_APP_VERSION=${APP_VERSION}
 RUN npm run build
 
 # Runs as non-root (uid 101) and listens on 8080
-FROM nginxinc/nginx-unprivileged:1.27-alpine
+# 1.30 = current nginx stable branch (1.27 is end-of-life and gets no fixes)
+FROM nginxinc/nginx-unprivileged:1.30-alpine
+# Pull in OS security fixes released after the base image was built
+USER root
+RUN apk upgrade --no-cache
+USER 101
 ENV BACKEND_URL=http://backend:3000
 COPY frontend/nginx.conf /etc/nginx/templates/default.conf.template
 COPY --from=build /app/dist /usr/share/nginx/html
