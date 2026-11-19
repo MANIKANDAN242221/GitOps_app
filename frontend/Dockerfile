@@ -9,9 +9,10 @@ ENV VITE_APP_VERSION=${APP_VERSION}
 RUN npm run build
 
 # Runs as non-root (uid 101) and listens on 8080
-# 1.30 = current nginx stable branch (1.27 is end-of-life and gets no fixes)
-FROM nginxinc/nginx-unprivileged:1.30-alpine
-# Pull in OS security fixes released after the base image was built
+# Pin an exact nginx + Alpine version: the floating "1.27-alpine" tag had drifted
+# to nginx 1.30.6, which has CRITICAL/HIGH CVEs (fixed in >= 1.30.7).
+FROM nginxinc/nginx-unprivileged:1.31.7-alpine3.24
+# Pull in the latest Alpine security patches, then drop back to the non-root user.
 USER root
 RUN apk upgrade --no-cache
 USER 101
